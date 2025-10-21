@@ -6,3 +6,9 @@
   ==================================================================
 -->
 
+## 10/21/2025 - Designed a modular ESP32 + NRF24 PCB and finished schematic.  
+
+![visual.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NDE2OSwicHVyIjoiYmxvYl9pZCJ9fQ==--64e4e589413ac0d06dee087b7cc4eea453b857c5/visual.png)
+i just started using kicad and i alredy figured out how to place things, view them in 3d and do the electrical connections, this is my first time so i am really happy for the result![Istantanea_2025-10-21_21-52-56.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NDE3MCwicHVyIjoiYmxvYl9pZCJ9fQ==--a1ef2e941800552aed832544a5cc5fd5f8bc5025/Istantanea_2025-10-21_21-52-56.png)
+the second photo is my second attempt  
+

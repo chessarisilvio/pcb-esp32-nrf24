@@ -12,3 +12,8 @@
 i just started using kicad and i alredy figured out how to place things, view them in 3d and do the electrical connections, this is my first time so i am really happy for the result![Istantanea_2025-10-21_21-52-56.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NDE3MCwicHVyIjoiYmxvYl9pZCJ9fQ==--a1ef2e941800552aed832544a5cc5fd5f8bc5025/Istantanea_2025-10-21_21-52-56.png)
 the second photo is my second attempt  
 
+## 10/22/2025 - made the spi, ce, csn, ecc... connections  
+
+![image.jpg](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NDM3OCwicHVyIjoiYmxvYl9pZCJ9fQ==--adbbbc20723dcef5bbaf3c3e8cf4a574b08cbea0/image.jpg)
+those are all the connections i made, i know they are a mess seen like this but i will make them clearer when i will draw them by hand because this software is hard to use  
+

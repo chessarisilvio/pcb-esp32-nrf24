@@ -12,8 +12,21 @@
 i just started using kicad and i alredy figured out how to place things, view them in 3d and do the electrical connections, this is my first time so i am really happy for the result![Istantanea_2025-10-21_21-52-56.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NDE3MCwicHVyIjoiYmxvYl9pZCJ9fQ==--a1ef2e941800552aed832544a5cc5fd5f8bc5025/Istantanea_2025-10-21_21-52-56.png)
 the second photo is my second attempt  
 
-## 10/22/2025 - made the spi, ce, csn, ecc... connections  
+## 10/22/2025 2 PM - made the spi, ce, csn, ecc... connections  
 
 ![image.jpg](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NDM3OCwicHVyIjoiYmxvYl9pZCJ9fQ==--adbbbc20723dcef5bbaf3c3e8cf4a574b08cbea0/image.jpg)
 those are all the connections i made, i know they are a mess seen like this but i will make them clearer when i will draw them by hand because this software is hard to use  
+
+## 10/22/2025 10 PM - made the connections more easy  
+
+![Senza titolo.jpg](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NDUzOCwicHVyIjoiYmxvYl9pZCJ9fQ==--1d5755148dfe03550f6c3ab2f7fe1d3ec47edc4d/Senza%20titolo.jpg)
+nRF24L01#1 Pin   ESP32 Pin   nRF24L01#2 Pin   ESP32 Pin   Note
+GND                     GND                  GND              GND            Shared by both modules
+VCC                       3.3V                  VCC               3.3V            Shared by both modules
+CE                          GPIO17               CE               GPIO18        Use separate GPIO for each
+CSN                      GPIO5               CSN                GPIO21        Use separate GPIO for each
+SCK                     GPIO18               SCK                GPIO18            Shared SPI bus
+MOSI                   GPIO23             MOSI                GPIO23           Shared SPI bus
+MISO                   GPIO19             MISO               GPIO19          Shared SPI bus
+  
 

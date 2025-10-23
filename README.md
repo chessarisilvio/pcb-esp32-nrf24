@@ -9,6 +9,8 @@ For each node (x2):
 
 1x ESP32 with TFT display (yellow board)
 
+2x 5v to 3.3v lm2596-3.3
+
 Power supply (USB or battery)
 
 Connections (each ESP32 with nRF24):

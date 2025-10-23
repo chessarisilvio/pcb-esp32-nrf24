@@ -2,75 +2,164 @@
 #include <RF24.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <WebServer.h>
+
+// ===== CONFIGURATION =====
+// WiFi credentials
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+// Display ESP32 IP address (Node A's display)
+const char* myDisplayIP = "192.168.1.100";  // Change to actual IP of Display A
 
 // nRF24 pin configuration
 #define CE_PIN   17
 #define CSN_PIN  5
 
-// WiFi credentials
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
+// nRF24 addresses (pipes)
+const byte txAddress[6] = "00001";  // Send to Node B
+const byte rxAddress[6] = "00002";  // Receive from Node B
 
-// Display ESP32 IP address
-const char* displayServerIP = "192.168.1.100";  // Change to actual IP
-const int displayServerPort = 80;
-
+// ===== HARDWARE SETUP =====
 RF24 radio(CE_PIN, CSN_PIN);
-const byte address[6] = "00001";  // nRF24 pipe address
+WebServer server(8080);  // Web server for sending messages
+
+String lastReceivedMessage = "";
+unsigned long lastSendTime = 0;
+const unsigned long sendInterval = 5000;  // Send message every 5 seconds
 
 void setup() {
   Serial.begin(115200);
+  Serial.println("\n=== Node A: ESP32 with nRF24 ===");
   
   // Initialize nRF24
   if (!radio.begin()) {
-    Serial.println("nRF24 initialization failed!");
+    Serial.println("ERROR: nRF24 initialization failed!");
     while (1);
   }
   
-  radio.openReadingPipe(1, address);
+  radio.openWritingPipe(txAddress);     // Transmit to Node B
+  radio.openReadingPipe(1, rxAddress);   // Receive from Node B
   radio.setPALevel(RF24_PA_LOW);
+  radio.setDataRate(RF24_250KBPS);
   radio.startListening();
+  
+  Serial.println("nRF24 initialized successfully");
+  Serial.println("TX Address: 00001 (to Node B)");
+  Serial.println("RX Address: 00002 (from Node B)");
   
   // Connect to WiFi
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi");
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
+  
   Serial.println("\nWiFi connected!");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  
+  // Setup web interface for manual message sending
+  server.on("/", handleRoot);
+  server.on("/send", HTTP_POST, handleSend);
+  server.begin();
+  
+  Serial.println("Web server started on port 8080");
+  Serial.println("Ready to receive and transmit messages");
 }
 
 void loop() {
+  // Handle web requests
+  server.handleClient();
+  
+  // Check for incoming nRF24 messages
   if (radio.available()) {
     char receivedData[32] = "";
     radio.read(&receivedData, sizeof(receivedData));
     
-    Serial.print("nRF24 received: ");
-    Serial.println(receivedData);
+    lastReceivedMessage = String(receivedData);
     
-    // Send data to display ESP32 via WiFi
-    if (WiFi.status() == WL_CONNECTED) {
-      HTTPClient http;
-      String url = "http://" + String(displayServerIP) + "/update";
-      
-      http.begin(url);
-      http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-      
-      String postData = "message=" + String(receivedData);
-      int httpCode = http.POST(postData);
-      
-      if (httpCode > 0) {
-        Serial.printf("HTTP Response: %d\n", httpCode);
-      } else {
-        Serial.printf("HTTP Error: %s\n", http.errorToString(httpCode).c_str());
-      }
-      
-      http.end();
-    }
+    Serial.println("=================================");
+    Serial.print("nRF24 RECEIVED: ");
+    Serial.println(lastReceivedMessage);
+    Serial.println("=================================");
+    
+    // Forward to display via WiFi
+    sendToDisplay(lastReceivedMessage);
   }
   
-  delay(100);
+  // Auto-send test message periodically (optional)
+  if (millis() - lastSendTime > sendInterval) {
+    String testMessage = "Node A: " + String(millis() / 1000) + "s";
+    sendNRF24Message(testMessage);
+    lastSendTime = millis();
+  }
+  
+  delay(10);
+}
+
+void sendNRF24Message(String message) {
+  radio.stopListening();
+  
+  char data[32];
+  message.toCharArray(data, 32);
+  
+  bool success = radio.write(&data, sizeof(data));
+  
+  Serial.print("Sending via nRF24: ");
+  Serial.print(message);
+  Serial.print(" - ");
+  Serial.println(success ? "SUCCESS" : "FAILED");
+  
+  radio.startListening();
+}
+
+void sendToDisplay(String message) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String url = "http://" + String(myDisplayIP) + "/update";
+    
+    http.begin(url);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    
+    String postData = "message=" + message;
+    int httpCode = http.POST(postData);
+    
+    if (httpCode > 0) {
+      Serial.printf("Display update: HTTP %d\n", httpCode);
+    } else {
+      Serial.printf("Display update FAILED: %s\n", http.errorToString(httpCode).c_str());
+    }
+    
+    http.end();
+  } else {
+    Serial.println("WiFi not connected, cannot update display");
+  }
+}
+
+void handleRoot() {
+  String html = "<html><head><meta charset='UTF-8'></head><body>";
+  html += "<h1>Node A Control Panel</h1>";
+  html += "<h2>Send Message to Node B</h2>";
+  html += "<form action='/send' method='POST'>";
+  html += "<input type='text' name='message' placeholder='Enter message' maxlength='30' size='40'><br><br>";
+  html += "<input type='submit' value='Send via nRF24'>";
+  html += "</form>";
+  html += "<h3>Last Received: " + lastReceivedMessage + "</h3>";
+  html += "</body></html>";
+  
+  server.send(200, "text/html", html);
+}
+
+void handleSend() {
+  if (server.hasArg("message")) {
+    String message = server.arg("message");
+    sendNRF24Message(message);
+    server.sendHeader("Location", "/");
+    server.send(303);
+  } else {
+    server.send(400, "text/plain", "Bad Request");
+  }
 }

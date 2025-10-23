@@ -30,3 +30,19 @@ MOSI                   GPIO23             MOSI                GPIO23           S
 MISO                   GPIO19             MISO               GPIO19          Shared SPI bus
   
 
+## 10/23/2025 - made the code for the esp32 nrf24 and the esp32 yellow  
+
+![6ea31d84-19c4-44da-884c-18692a05e0bb.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NDc1MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5b899a88b01a4c7dcbb2d38a0ef4ac76cd1fe34a/6ea31d84-19c4-44da-884c-18692a05e0bb.png)
+
+Added detailed step-by-step instructions for library installation and display configuration.
+
+Provided explicit wiring tables for ESP32 and nRF24 connections.
+
+Included comprehensive troubleshooting tips covering nRF24, WiFi, and display issues.
+
+Improved network architecture for bidirectional communication with web interface control.
+
+Enhanced documentation for easier setup, testing, and expansion.
+
+These make the project more beginner-friendly and reliable for wireless and IoT experimentation.!  
+

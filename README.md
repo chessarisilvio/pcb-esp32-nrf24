@@ -2,16 +2,22 @@
 This project is a modular PCB designed to host an ESP32 microcontroller and multiple NRF24 wireless modules, this board ideal for experimentation in wireless communication, sensor networks, or jamming systems.
 
 how to make it work:
-Hardware Requirements
-For each node (x2):
+Hardware Requirements (per node)
+1× ESP32 DevKit board (38-pin, with USB Type-C connector)
 
-1x ESP32 DevKit with nRF24L01 module
+2× nRF24L01 modules (E-BYTE version recommended)
 
-1x ESP32 with TFT display (yellow board)
+1× ESP32 “yellow display board” (2.8" TFT with ILI9341 controller)
 
-2x 5v to 3.3v lm2596-3.3
+2× LM2596-3.3V DC-DC step-down converters (5V to 3.3V)
 
-Power supply (USB or battery)
+Minimum 2 standard breadboards (or, for custom assembly, 2 pieces of 2.54mm pitch female headers and 1 universal prototype board)
+
+20× male-to-male jumper wires (20cm length)
+
+20× female-to-female jumper wires (20cm length)
+
+Power supply (USB Type-C cable or battery pack with 5V output)
 
 Connections (each ESP32 with nRF24):
 

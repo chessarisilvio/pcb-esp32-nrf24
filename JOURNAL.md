@@ -46,3 +46,10 @@ Enhanced documentation for easier setup, testing, and expansion.
 
 These make the project more beginner-friendly and reliable for wireless and IoT experimentation.!  
 
+## 10/24/2025 - real photo of the yellow esp32  
+
+to help people understand this project i have fixed anything ai related as suggested, so here it is what the display text would look like in the esp32 yellow board, i have also fixed some codes and made the readme more clear.
+![Istantanea_2025-10-24_09-10-07.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NTAzMywicHVyIjoiYmxvYl9pZCJ9fQ==--b47d325bf620d097205621f60a7b9a27d222e712/Istantanea_2025-10-24_09-10-07.png)
+
+  
+

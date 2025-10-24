@@ -1,3 +1,4 @@
+<img width="1224" height="1611" alt="1000138540" src="https://github.com/user-attachments/assets/089c7715-0368-4cbc-8ecf-4815a7639396" />
 pcb-esp32-nrf24
 
 This project is made to make two esp32 communicate on the 2.4ghz band with 2 nrf24 ebyte in the range of 50m.

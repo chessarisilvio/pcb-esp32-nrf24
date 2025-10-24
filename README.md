@@ -1,11 +1,13 @@
 pcb-esp32-nrf24
 
-This project is made to make you able to print your own pcb or use a breadboard to host an ESP32 microcontroller along with two NRF24 wireless modules. It’s perfect for experimenting with wireless communication or even jamming systems.
+This project is made to make two esp32 communicate on the 2.4ghz band with 2 nrf24 ebyte in the range of 50m.
+you can then show the text on a esp32 Yellow board or on a 0.96 OLED screen connected to the esp32.
+It’s perfect for experimenting with wireless communication.
 
 What You Need (Per Node)
 - 1× ESP32 DevKit board (38-pin, with USB Type-C)
 - 2× nRF24L01 modules (E-BYTE version recommended)
-- 1× ESP32 yellow display board (2.8" TFT with ILI9341 controller)
+- 1× ESP32 yellow display board (2.8" TFT with ILI9341 controller) OR a ssd1306 i2c OLED 0.96" screen
 - 2× LM2596-3.3V DC-DC step-down converters (5V to 3.3V)
 - At least 2 standard breadboards (or if assembling custom, 2 sets of 2.54mm female headers and 1 universal prototype board)
 - 20× male-to-male jumper wires (20cm)

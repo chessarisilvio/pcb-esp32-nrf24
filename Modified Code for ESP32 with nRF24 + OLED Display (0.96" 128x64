@@ -1,0 +1,129 @@
+//connections for the oled display (SSD1306 I2C) (0.96" 128x64)
+// VCC  → 3.3V
+// GND  → GND
+// SCL  → GPIO 22
+// SDA  → GPIO 21
+
+#include <SPI.h>
+#include <RF24.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// OLED Display settings
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1  // No reset pin
+#define SCREEN_ADDRESS 0x3C
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+// nRF24 setup
+#define CE_PIN   17
+#define CSN_PIN  5
+
+const byte txAddress[6] = "00001";
+const byte rxAddress[6] = "00002";
+
+RF24 radio(CE_PIN, CSN_PIN);
+
+String lastReceivedMessage = "";
+unsigned long lastSendTime = 0;
+const unsigned long sendInterval = 5000;
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Node A: ESP32 + nRF24 + OLED");
+
+  // Initialize OLED
+  if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println("OLED init failed!");
+    while (true);
+  }
+  
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println("Starting...");
+  display.display();
+  delay(1000);
+
+  // Initialize nRF24
+  if (!radio.begin()) {
+    Serial.println("nRF24 init failed!");
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.println("Radio FAIL");
+    display.display();
+    while (true);
+  }
+
+  radio.openWritingPipe(txAddress);
+  radio.openReadingPipe(1, rxAddress);
+  radio.setPALevel(RF24_PA_LOW);
+  radio.setDataRate(RF24_250KBPS);
+  radio.startListening();
+
+  Serial.println("System ready");
+  
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.println("Ready!");
+  display.println("Waiting msgs...");
+  display.display();
+}
+
+void loop() {
+  // Check for incoming messages
+  if (radio.available()) {
+    char buffer[32] = {0};
+    radio.read(&buffer, sizeof(buffer));
+    lastReceivedMessage = String(buffer);
+
+    Serial.println("---- Received ----");
+    Serial.println(lastReceivedMessage);
+    Serial.println("------------------");
+
+    updateDisplay();
+  }
+
+  // Send periodic test messages
+  if (millis() - lastSendTime > sendInterval) {
+    String msg = "Node A: " + String(millis() / 1000) + "s";
+    sendMessage(msg);
+    lastSendTime = millis();
+  }
+
+  delay(10);
+}
+
+void sendMessage(String msg) {
+  radio.stopListening();
+  char data[32];
+  msg.toCharArray(data, 32);
+  bool ok = radio.write(&data, sizeof(data));
+
+  Serial.print("Sending: "); Serial.print(msg);
+  Serial.println(ok ? " OK" : " FAIL");
+
+  radio.startListening();
+}
+
+void updateDisplay() {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  
+  // Header
+  display.setCursor(0, 0);
+  display.println("TEXT RECEIVED:");
+  display.drawLine(0, 10, 128, 10, SSD1306_WHITE);
+  
+  // Message content
+  display.setCursor(0, 20);
+  display.setTextSize(2);
+  display.println(lastReceivedMessage);
+  
+  display.display();
+}

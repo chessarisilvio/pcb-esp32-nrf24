@@ -1,12 +1,14 @@
 Item,Qty,Specs
 ESP32 DevKit,1,"ESP32 DevKit, 38-pin, Type-C USB connector"
 nRF24L01 E-BYTE Module,2,"2.4 GHz Wireless Module, EBYTE variant"
-ESP32 Yellow Display Board ,1,"2.8'' ILI9341 TFT, CYD 2432S028R type"
 LM2596-3.3 DC-DC Converter,2,"DC-DC step-down regulator, 5V to 3.3V"
 Breadboard,2,Standard full-size solderless breadboard
 "Female Header, 2.54mm",2,"Optional, for PCB mounting"
 Universal PCB,1,"Optional, for all-in-one board"
 Male-to-Male Jumper Wires,20,"Jumper wires, 20cm, male-male"
 Female-to-Female Jumper Wires,20,"Jumper wires, 20cm, female-female"
+External WiFi Antenna,2,"10dBi RP-SMA 2.4GHz/5GHz dual-band antenna, red"
+
+
 
 

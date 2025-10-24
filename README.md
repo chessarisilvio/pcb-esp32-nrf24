@@ -1,156 +1,87 @@
-# pcb-esp32-nrf24
-This project is a modular PCB designed to host an ESP32 microcontroller and multiple NRF24 wireless modules, this board ideal for experimentation in wireless communication, sensor networks, or jamming systems.
+pcb-esp32-nrf24
 
-how to make it work:
-Hardware Requirements (per node)
-1× ESP32 DevKit board (38-pin, with USB Type-C connector)
+This project is made to make you able to print your own pcb or use a breadboard to host an ESP32 microcontroller along with two NRF24 wireless modules. It’s perfect for experimenting with wireless communication or even jamming systems.
 
-2× nRF24L01 modules (E-BYTE version recommended)
+What You Need (Per Node)
+- 1× ESP32 DevKit board (38-pin, with USB Type-C)
+- 2× nRF24L01 modules (E-BYTE version recommended)
+- 1× ESP32 yellow display board (2.8" TFT with ILI9341 controller)
+- 2× LM2596-3.3V DC-DC step-down converters (5V to 3.3V)
+- At least 2 standard breadboards (or if assembling custom, 2 sets of 2.54mm female headers and 1 universal prototype board)
+- 20× male-to-male jumper wires (20cm)
+- 20× female-to-female jumper wires (20cm)
+- Power supply: USB Type-C cable or a 5V battery pack
 
-1× ESP32 “yellow display board” (2.8" TFT with ILI9341 controller)
+Wiring: Connect Each ESP32 to nRF24
+nRF24L01 #1 Connections:
+GND  -> GND
+VCC  -> 3.3V
+CE   -> GPIO17
+CSN  -> GPIO5
+SCK  -> GPIO18
+MOSI -> GPIO23
+MISO -> GPIO19
 
-2× LM2596-3.3V DC-DC step-down converters (5V to 3.3V)
+nRF24L01 #2 Connections:
+GND  -> GND
+VCC  -> 3.3V
+CE   -> GPIO18
+CSN  -> GPIO21
+SCK  -> GPIO18
+MOSI -> GPIO23
+MISO -> GPIO19
 
-Minimum 2 standard breadboards (or, for custom assembly, 2 pieces of 2.54mm pitch female headers and 1 universal prototype board)
-
-20× male-to-male jumper wires (20cm length)
-
-20× female-to-female jumper wires (20cm length)
-
-Power supply (USB Type-C cable or battery pack with 5V output)
-
-Connections (each ESP32 with nRF24):
-
-text
-nRF24L01    ESP32
-GND      →  GND
-VCC      →  3.3V
-CE       →  GPIO17
-CSN      →  GPIO5
-SCK      →  GPIO18
-MOSI     →  GPIO23
-MISO     →  GPIO19
-IRQ      →  Not connected (optional)
 
 Step 1: Install Required Libraries
-Arduino IDE → Sketch → Include Library → Manage Libraries
-
-Install these libraries:
-
-RF24 by TMRh20
-
-TFT_eSPI by Bodmer
-
-WiFi (built-in)
-
-WebServer (built-in)
-
-HTTPClient (built-in)
+In Arduino IDE, go to Sketch → Include Library → Manage Libraries and install:
+- RF24 by TMRh20
+- TFT_eSPI by Bodmer
 
 Step 2: Configure TFT_eSPI Library
-Locate the TFT_eSPI library folder:
+Find the TFT_eSPI folder:
+- Windows: Documents\Arduino\libraries\TFT_eSPI
+- Mac: ~/Documents/Arduino/libraries/TFT_eSPI
+- Linux: ~/Arduino/libraries/TFT_eSPI
+Open User_Setup_Select.h. Comment out all the #include lines except the one for your display. For the ESP32 yellow board with ILI9341, use:
 
-Windows: Documents\Arduino\libraries\TFT_eSPI
-
-Mac: ~/Documents/Arduino/libraries/TFT_eSPI
-
-Linux: ~/Arduino/libraries/TFT_eSPI
-
-Open User_Setup_Select.h
-
-Comment out all #include lines and uncomment the one matching your display
-
-For ESP32 yellow board with ILI9341, typically use:
-
-cpp
+for the c++ code:
 #include <User_Setups/Setup25_TTGO_T_Display.h>
-If your display model is different, edit User_Setup.h manually with correct pins
 
-Step 3: Hardware Assembly
-Node A:
+Step 3: Assemble Hardware
+Node A: ESP32 #1 + nRF24 (with pins as above) + ESP32 Yellow Display #1
 
-ESP32 #1 with nRF24 (GPIO17=CE, GPIO5=CSN, standard SPI pins)
-
-ESP32 Yellow Display #1
-
-Node B:
-
-ESP32 #2 with nRF24 (same pinout as Node A)
-
-ESP32 Yellow Display #2
+Node B: ESP32 #2 + nRF24 (same pins) + ESP32 Yellow Display #2
 
 Step 4: Upload Code to Display Boards
-Open Display code in Arduino IDE
+Open display code in Arduino IDE.
 
-Change WiFi credentials:
-
-cpp
+Update your WiFi credentials:
+On the c++ code find this two variables and give them the name and password of your wifi
 const char* ssid = "YourWiFiName";
 const char* password = "YourWiFiPassword";
-For Display A, set: String nodeID = "Display A";
 
-For Display B, set: String nodeID = "Display B";
+For Display A, set String nodeID = "Display A";
+For Display B, set String nodeID = "Display B";
 
-Upload to first display board
+then upload to each display board and open Serial Monitor (115200 baud) and note each display’s IP address.
 
-Open Serial Monitor (115200 baud)
+Step 5:
+Upload Code to nRF24 Boards, the update WiFi and set Display A’s IP address:
+- const char* myDisplayIP = "192.168.1.100";  // Use your actual IP
+- Upload to ESP32 with nRF24 (Node A) and check Serial Monitor for connection status.
+- Repeat for Node B, using Display B’s IP address.
 
-Write down the IP address (e.g., 192.168.1.100)
+Step 6: Test the System
+- Automatic test: Node A sends a message every 5 seconds, Node B every 7 seconds, and displays update automatically.
 
-Repeat for second display board and note its IP (e.g., 192.168.1.101)
-
-Step 5: Upload Code to nRF24 Boards
-For Node A:
-
-Open Node A code
-
-Change WiFi credentials (same as displays)
-
-Set Display A IP address:
-
-cpp
-const char* myDisplayIP = "192.168.1.100";
-Upload to ESP32 with nRF24 (Node A)
-
-Open Serial Monitor to verify connection
-
-For Node B:
-
-Open Node B code
-
-Change WiFi credentials
-
-Set Display B IP address:
-
-cpp
-const char* myDisplayIP = "192.168.1.101";
-Upload to ESP32 with nRF24 (Node B)
-
-Open Serial Monitor to verify connection
-
-Step 6: Testing the System
-Automatic Test:
-
-Node A sends message every 5 seconds
-
-Node B sends message every 7 seconds
-
-Both displays should update automatically
-
-Manual Test via Web Interface:
-
-Find IP of Node A nRF24 board in Serial Monitor
-
-Open browser: http://192.168.1.xxx:8080 (replace with actual IP)
-
-Type message and click "Send via nRF24"
-
-Message should appear on Node B's display
-
-Repeat from Node B to Node A
+Manual test via web:
+- Find Node A’s nRF24 IP from Serial Monitor.
+- Open browser: http://[NodeA_IP]:8080
+- Type a message, click "Send via nRF24," and see it appear on Node B’s display.
+- Repeat from Node B to Node A.
 
 Step 7: Verify Operation
-Expected Serial Monitor Output (Node A):
+Expected Serial Monitor output on Node A:
 
 text
 === Node A: ESP32 with nRF24 ===
@@ -164,98 +95,47 @@ Sending via nRF24: Node A: 5s - SUCCESS
 nRF24 RECEIVED: Node B: 7s
 =================================
 Display update: HTTP 200
-Expected Display Output:
 
-Display should show received messages in large white text
+Expected display behavior:
+- Shows received messages in large white text.
+- Background refreshes on new messages.
+- Footer displays IP address and uptime.
 
-Background updates with each new message
+Troubleshooting
+nRF24 initialization failed?
+- Check all 7 connections (VCC, GND, CE, CSN, SCK, MOSI, MISO).
+- Make sure nRF24 is powered from 3.3V, not 5V.
+- Add a 10µF capacitor between VCC and GND on the nRF24.
+- Try another nRF24 module (some may be defective).
 
-Footer shows IP and uptime
+WiFi connection timeout?
+- Confirm SSID and password are correct.
+- Router must be 2.4GHz (ESP32 doesn’t support 5GHz).
+- Move closer to the router.
+- Check router firewall settings.
 
-Troubleshooting Guide
-Problem: nRF24 initialization failed
-Solution:
+Display shows "WiFi Failed"?
+- Double-check credentials (case-sensitive).
+- Confirm WiFi network is available.
+- Try connecting via a phone hotspot.
 
-Check all 7 wire connections (VCC, GND, CE, CSN, SCK, MOSI, MISO)
+Messages don’t appear on display?
+- Verify display IP matches IP in nRF24 code.
+- Ping display IP from a computer.
+- Check Serial Monitor for HTTP errors.
 
-Ensure nRF24 powered from 3.3V (NOT 5V!)
+nRF24 receives no data?
+- Verify matching TX and RX addresses.
+- Ensure modules are on the same channel.
+- Reduce distance (start close, ~1 meter).
+- Use the same data rate (RF24_250KBPS).
 
-Add 10µF capacitor between nRF24 VCC and GND
+Display text looks corrupted?
+- Reconfigure TFT_eSPI for your display.
+- Check display wiring.
+- Update TFT_eSPI library.
 
-Try different nRF24 module (some are defective)
-
-Problem: WiFi connection timeout
-Solution:
-
-Verify SSID and password are correct
-
-Check WiFi router is 2.4GHz (ESP32 doesn't support 5GHz)
-
-Move closer to router
-
-Check router firewall settings
-
-Problem: Display shows "WiFi Failed"
-Solution:
-
-Double-check credentials match exactly (case-sensitive)
-
-Verify WiFi network is available
-
-Try hotspot from phone to isolate issue
-
-Problem: Messages not appearing on display
-Solution:
-
-Verify display IP matches IP in nRF24 code
-
-Ping display IP from computer to check network connection
-
-Check Serial Monitor for HTTP error codes
-
-Ensure both boards on same WiFi network
-
-Problem: nRF24 receives nothing
-Solution:
-
-Verify TX address of sender matches RX address of receiver
-
-Check nRF24 modules are on same channel
-
-Reduce distance between modules (start with 1 meter)
-
-Ensure both using same data rate (RF24_250KBPS)
-
-Problem: Display shows corrupted text
-Solution:
-
-Reconfigure TFT_eSPI library for your specific display
-
-Check display wiring
-
-Update TFT_eSPI library to latest version
-
-Problem: Web interface not accessible
-Solution:
-
-Verify ESP32 IP address in Serial Monitor
-
-Use correct port (:8080 for nRF24 boards, :80 for displays)
-
-Check firewall on your computer
-
-Advanced Customization
-Adjust nRF24 Range:
-cpp
-radio.setPALevel(RF24_PA_HIGH);  // Use HIGH instead of LOW
-Change Message Frequency:
-cpp
-const unsigned long sendInterval = 10000;  // 10 seconds instead of 5
-Add Message History:
-Store last 10 messages in array and display as scrolling list
-
-Add Encryption:
-Implement simple XOR encryption on messages before transmission
-
-Add Timestamps:
-Include RTC module and timestamp each message
+Web interface inaccessible?
+- Check ESP32 IP in Serial Monitor.
+- Use correct ports (:8080 for nRF24, :80 for displays).
+- Disable or adjust computer firewall.
